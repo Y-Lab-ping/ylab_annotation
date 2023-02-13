@@ -1,18 +1,37 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="home_button">
+      <div @click="moveToCreate">アノテーション作成</div>
+    </div>
+    <div class="home_button">
+      <div @click="moveToCreate">アノテーション編集</div>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld
+  data() {
+    return {};
+  },
+  methods: {
+    moveToCreate() {
+      this.$router.push({ path: "/create_annotation" });
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.home {
+  & {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+  &_button {
+    border: solid 1px;
   }
 }
-</script>
+</style>
