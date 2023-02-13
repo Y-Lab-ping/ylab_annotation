@@ -1,42 +1,52 @@
 from flask import Flask, request, jsonify, abort, render_template
 from flask_restful import Api, Resource
+import boto3
 import os
-import csv
+import datetime
 from io import StringIO
 from flask_cors import CORS
 import base64
 app = Flask(__name__, static_folder="./dist/static",template_folder="./dist")
+
+app.config.from_object("config.BaseConfig")
 
 UPLOAD_FOLDER = "../upload"
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config['JSON_AS_ASCII'] = False
 
+s3 = boto3.client(
+  "s3",
+  region_name = "us-east-1",
+  aws_access_key_id = app.config["AWS_ACCESS_KEY"],
+  aws_secret_access_key = app.config["AWS_SECRET_ACCESS_KEY"]
+)
 
 CORS(app)
 api = Api(app)
 
-
-# class HelloWorld(Resource):
-#   def get(self):
-#     return render_template("index.html")
-
 class SetAnnotation(Resource):
   def post(self):
-    print("post success")
-    print(request.form["file"])
     if "file" not in request.form:
       return abort(400, {"msg": "ファイルを入力してください"})
     base64fileStorageObj = request.form["file"][21:]
-    fileStorageObj = base64.b64decode(base64fileStorageObj)#.decode("shift-jis")
-    with open("decoded.csv", "wb") as f:
-      f.write(fileStorageObj)
-        
-    # filename = fileStorageObj.filename
-    # print(fileStorageObj)
+    fileStorageObj = base64.b64decode(base64fileStorageObj)
+    s3_bucket = app.config["S3_BUCKET"]
 
-    # with open(app.config["UPLOAD_FOLDER"])
-    # reader.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+    filename = "annotation"+datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")+".csv"
+    with open(filename, "wb") as f:
+      f.write(fileStorageObj)
+    
+    response = s3.put_object(
+      Body = open(filename, "rb"),
+      Bucket = s3_bucket,
+      Key = filename,
+    )
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+        return jsonify(message='S3へのアップロードでエラーが発生しました'), 500
+  
+    
+    os.remove(filename)
     return jsonify({"message": "upload_success"})
 
 @app.route("/")
@@ -46,14 +56,8 @@ def index():
     pass
 
 
-# api.add_resource(HelloWorld, "/")
 api.add_resource(SetAnnotation, "/api/reg_file")
 
-@app.route("/api/reg_file", methods=['POST'])
-def uploadCsv():
-  if request.method == "POST":
-    file = request.form["file"]
-    file.save(os.path.join(app.config["UPLOAD_FOLDER"], file.filename))
 
 @app.errorhandler(400)
 def costom400(error):

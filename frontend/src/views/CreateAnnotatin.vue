@@ -44,14 +44,12 @@ export default {
       this.isSaving = true;
       const params = new FormData();
       params.append("file", this.uploaded_file);
-      console.log(params);
       try {
         const response = await axios.post(base + "/api/reg_file", params, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.info(response.data);
 
         this.annotation_id = response.data;
       } catch (e) {
