@@ -2,6 +2,10 @@
   <div>
     <h3>アノテーションを作成</h3>
     <section class="form">
+      <div>
+        <div>アノテーション名</div>
+        <input type="text" v-model="annotation_name" />
+      </div>
       <input type="file" name="" id="" @change="onFileChange" />
       <button @click="save">送信</button>
     </section>
@@ -20,6 +24,7 @@ export default {
   data() {
     return {
       uploaded_file: null,
+      annotation_name: "",
       file: null,
       isSaving: false,
       annotation_id: null,
@@ -44,6 +49,7 @@ export default {
       this.isSaving = true;
       const params = new FormData();
       params.append("file", this.uploaded_file);
+      params.append("title", this.annotation_name);
       try {
         const response = await axios.post(base + "/api/reg_file", params, {
           headers: {

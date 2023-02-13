@@ -8,6 +8,7 @@ flask = "*"
 flask-restful = "*"
 flask-cors = "*"
 boto3 = "*"
+requests = "*"
 
 [dev-packages]
 

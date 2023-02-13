@@ -3,6 +3,7 @@ from flask_restful import Api, Resource
 import boto3
 import os
 import datetime
+import requests
 from io import StringIO
 from flask_cors import CORS
 import base64
@@ -32,20 +33,30 @@ class SetAnnotation(Resource):
     base64fileStorageObj = request.form["file"][21:]
     fileStorageObj = base64.b64decode(base64fileStorageObj)
     s3_bucket = app.config["S3_BUCKET"]
-
-    filename = "annotation"+datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")+".csv"
+    annotation_name = request.form["title"]
+    filename = "annotation"+annotation_name+datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")+".csv"
     with open(filename, "wb") as f:
       f.write(fileStorageObj)
     
-    response = s3.put_object(
+    upload_to_s3 = s3.put_object(
       Body = open(filename, "rb"),
       Bucket = s3_bucket,
       Key = filename,
     )
-    if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+    if upload_to_s3['ResponseMetadata']['HTTPStatusCode'] != 200:
         return jsonify(message='S3へのアップロードでエラーが発生しました'), 500
-  
+
+    post_data = {
+      "s3_name": filename,
+      "annotation_name": annotation_name
+    }
+
+    response = requests.post(app.config["BASE_URL"]+"annotation", json= post_data)
     
+    if response.status_code != 200 or response.json()["status"] != "SUCCESS" :
+      return jsonify(message = "アノテーション作成でエラーが発生しました")
+    
+    annotation_id = response.json()["annotation_id"]
     os.remove(filename)
     return jsonify({"message": "upload_success"})
 
