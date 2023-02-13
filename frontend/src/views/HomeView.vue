@@ -4,7 +4,7 @@
       <div @click="moveToCreate">アノテーション作成</div>
     </div>
     <div class="home_button">
-      <div @click="moveToCreate">アノテーション編集</div>
+      <div @click="moveToShow">アノテーション編集</div>
     </div>
   </div>
 </template>
@@ -16,7 +16,10 @@ export default {
   },
   methods: {
     moveToCreate() {
-      this.$router.push({ path: "/create_annotation" });
+      this.$router.push({ path: "/create" });
+    },
+    moveToShow() {
+      this.$router.push({ path: "/show" });
     },
   },
 };

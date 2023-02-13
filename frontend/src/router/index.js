@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CreateAnnotation from "../views/CreateAnnotatin.vue";
-
+import ShowAnnotation from "@/views/ShowAnnotation.vue";
+import EditAnnotation from "@/views/EditAnnotation.vue";
 const routes = [
   {
     path: "/",
@@ -19,9 +20,19 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
   {
-    path: "/create_annotation",
+    path: "/create",
     name: "create",
     component: CreateAnnotation,
+  },
+  {
+    path: "/show",
+    name: "show",
+    component: ShowAnnotation,
+  },
+  {
+    path: "/edit/:annotation_id",
+    name: "edit",
+    component: EditAnnotation,
   },
 ];
 
