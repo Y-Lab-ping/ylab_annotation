@@ -75,6 +75,6 @@ api.add_resource(SetAnnotation, "/api/reg_file")
 def costom400(error):
   return jsonify({"message": error.description["message"]})
 
-if __name__ == "__main__" :
-  # app.run(debug=False)
-  serve(app, host="0.0.0.0", port=5000)
+# if __name__ == "__main__" :
+#   # app.run(debug=False)
+#   serve(app, host="0.0.0.0", port=5000)
