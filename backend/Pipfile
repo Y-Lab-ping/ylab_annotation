@@ -9,6 +9,7 @@ flask-restful = "*"
 flask-cors = "*"
 boto3 = "*"
 requests = "*"
+waitress = "*"
 
 [dev-packages]
 

@@ -65,3 +65,9 @@ export default {
   },
 };
 </script>
+<style scoped>
+.table {
+  display: flex;
+  justify-content: center;
+}
+</style>

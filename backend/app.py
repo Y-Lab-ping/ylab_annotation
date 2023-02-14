@@ -5,8 +5,9 @@ import os
 import datetime
 import requests
 from io import StringIO
-from flask_cors import CORS
+# from flask_cors import CORS
 import base64
+from waitress import serve
 app = Flask(__name__, static_folder="./dist/static",template_folder="./dist")
 
 app.config.from_object("config.BaseConfig")
@@ -23,7 +24,7 @@ s3 = boto3.client(
   aws_secret_access_key = app.config["AWS_SECRET_ACCESS_KEY"]
 )
 
-CORS(app)
+# CORS(app)
 api = Api(app)
 
 class SetAnnotation(Resource):
@@ -62,7 +63,7 @@ class SetAnnotation(Resource):
 
 @app.route("/")
 @app.route("/<path:path>")
-def index():
+def index(path=None):
     return render_template("index.html")
     pass
 
@@ -75,4 +76,5 @@ def costom400(error):
   return jsonify({"message": error.description["message"]})
 
 if __name__ == "__main__" :
-  app.run(debug=True)
+  # app.run(debug=False)
+  serve(app, host="0.0.0.0", port=5000)
