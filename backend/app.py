@@ -40,40 +40,59 @@ CORS(app)
 api = Api(app)
 
 
-class SetAnnotation(Resource):
+class createAnnotation(Resource):
     def post(self):
-        if "file" not in request.form:
-            return abort(400, {"msg": "ファイルを入力してください"})
-        base64fileStorageObj = request.form["file"][21:]
-        fileStorageObj = base64.b64decode(base64fileStorageObj)
         s3_bucket = app.config["S3_BUCKET"]
         annotation_name = request.form["title"]
-        filename = (
-            "annotation"
-            + annotation_name
-            + datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
-            + ".csv"
-        )
-        with open(filename, "wb") as f:
-            f.write(fileStorageObj)
+        current_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        if "file" not in request.form:
+            return abort(400, {"msg": "ファイルを入力してください"})
+        is_image = bool(int(request.form["isImage"]))
+        print(is_image)
+        if not is_image:
+            base64fileStorageObj = request.form["file"][21:]
+            fileStorageObj = base64.b64decode(base64fileStorageObj)
+            filename = "annotation" + annotation_name + current_time + ".csv"
+            with open(filename, "wb") as f:
+                f.write(fileStorageObj)
 
-        upload_to_s3 = s3.put_object(
-            Body=open(filename, "rb"),
-            Bucket=s3_bucket,
-            Key=filename,
-        )
-        if upload_to_s3["ResponseMetadata"]["HTTPStatusCode"] != 200:
-            return jsonify(message="S3へのアップロードでエラーが発生しました"), 500
+            upload_to_s3 = s3.put_object(
+                Body=open(filename, "rb"),
+                Bucket=s3_bucket,
+                Key=filename,
+            )
+            if upload_to_s3["ResponseMetadata"]["HTTPStatusCode"] != 200:
+                return jsonify(message="S3へのアップロードでエラーが発生しました"), 500
+            os.remove(filename)
+        else:
+            print("start image")
+            zip_file_str = request.form["image"]
+            zip_file = zip_file_str[zip_file_str.find(",") + 1 :]
+            zip_file_decoded = base64.b64decode(zip_file)
+            zip_filename = "annotation" + annotation_name + current_time + "_image.zip"
+            with open(zip_filename, "wb") as f:
+                f.write(zip_file_decoded)
+            upload_zip_to_s3 = s3.put_object(
+                Body=open(zip_filename, "rb"), Bucket=s3_bucket, Key=zip_filename
+            )
+            if upload_zip_to_s3["ResponseMetadata"]["HTTPStatusCode"] != 200:
+                return jsonify(message="S3へのアップロードでエラーが発生しました"), 500
+            os.remove(zip_filename)
 
-        post_data = {"s3_name": filename, "annotation_name": annotation_name}
+        post_data = {
+            "s3_name": filename,
+            "annotation_name": annotation_name,
+            "is_image": is_image,
+        }
 
         response = requests.post(app.config["BASE_URL"] + "annotation", json=post_data)
+        print(response)
 
         if response.status_code != 200 or response.json()["status"] != "SUCCESS":
             return jsonify(message="アノテーション作成でエラーが発生しました")
 
         annotation_id = response.json()["annotation_id"]
-        os.remove(filename)
+
         return jsonify({"message": "upload_success"})
 
 
@@ -85,7 +104,7 @@ class getCSV(Resource):
         try:
             obj = s3.get_object(Bucket=s3_bucket, Key=filename)
         except:
-            return abort(400, "正しいデータをにゅうりょくしてください")
+            return abort(400, "正しいデータを入力してください")
 
         response = make_response()
 
@@ -104,7 +123,7 @@ def index(path=None):
     pass
 
 
-api.add_resource(SetAnnotation, "/api/reg_file")
+api.add_resource(createAnnotation, "/api/reg_file")
 api.add_resource(getCSV, "/api/get_csv")
 
 
