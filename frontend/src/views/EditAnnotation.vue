@@ -39,22 +39,6 @@ export default {
       const response = await axios.get(base_url + "job?annotation_id=" + id);
       console.log(response);
       this.jobList = [this.jobList, ...response.data.response_list];
-      this.jobList = [
-        {
-          image_0:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu-o0ymJgCRAFoRFnYD4VQlmP-yzwNalhZiQ&usqp=CAU",
-          image_1:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlKKIJO9G9u8ep7On4R4WmdrlKs5epE-7ulWS-sz0dhjuDzdID9N1WHAJUjF8NCCe2SSo&usqp=CAU",
-          isImage: true,
-        },
-        {
-          image_0:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlKKIJO9G9u8ep7On4R4WmdrlKs5epE-7ulWS-sz0dhjuDzdID9N1WHAJUjF8NCCe2SSo&usqp=CAU",
-          image_1:
-            "https://sorae.info/wp-content/uploads/2021/12/over70-freefloatingplanet-found-1.jpg",
-          isImage: true,
-        },
-      ];
     },
     async sendJob() {
       this.isSending = true;
