@@ -4,7 +4,7 @@
       <div @click="moveToCreate">アノテーション作成</div>
     </div>
     <div class="home_button">
-      <div @click="moveToShow">アノテーション編集</div>
+      <div @click="moveToShow">アノテーション編集・ダウンロード</div>
     </div>
   </div>
 </template>

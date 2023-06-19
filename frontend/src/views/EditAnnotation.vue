@@ -1,7 +1,18 @@
 <template>
   <div class="edit_area" v-if="jobList">
     <div v-for="(job, i) in jobList" :key="i" class="form">
-      <EditJob :index="i" :job="job" @save="getResult(job, $event)" />
+      <EditJob
+        v-if="!job.isImage"
+        :index="i"
+        :job="job"
+        @save="getResult(job, $event)"
+      />
+      <EditImageJob
+        v-else
+        :index="i"
+        :job="job"
+        @save="getResult(job, $event)"
+      />
     </div>
     <button @click="sendJob" :disabled="isSending">送信</button>
   </div>
@@ -10,10 +21,12 @@
 <script>
 import axios from "axios";
 import EditJob from "@/components/EditJob.vue";
+import EditImageJob from "@/components/EditImageJob.vue";
 const base_url = "https://dr832vdhbi.execute-api.us-east-1.amazonaws.com/prod/";
 export default {
   components: {
     EditJob,
+    EditImageJob,
   },
   data() {
     return { jobList: [], isSending: false };
@@ -24,7 +37,8 @@ export default {
     },
     async getJob(id) {
       const response = await axios.get(base_url + "job?annotation_id=" + id);
-      this.jobList = response.data.response_list;
+      console.log(response);
+      this.jobList = [this.jobList, ...response.data.response_list];
     },
     async sendJob() {
       this.isSending = true;

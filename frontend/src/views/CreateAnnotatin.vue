@@ -6,7 +6,26 @@
         <div>アノテーション名</div>
         <input type="text" v-model="annotation_name" />
       </div>
-      <input type="file" name="" id="" @change="onFileChange" />
+      <div>
+        <div>CSVファイルの選択</div>
+        <input type="file" name="" id="" @change="onFileChange" />
+      </div>
+      <div v-if="isImage">
+        <div>画像ファイルの選択</div>
+        <input
+          type="file"
+          accept="application/zip,application/x-zip-compressed"
+          name=""
+          id=""
+        />
+      </div>
+      <div class="check_image">
+        <input type="checkbox" v-model="isImage" name="" id="" />
+        <span class="checkbox_text">画像比較で登録</span>
+        <div class="warn" v-if="isImage">
+          ※画像はzipファイルに圧縮してから送信してください
+        </div>
+      </div>
       <button @click="save">送信</button>
     </section>
     <div v-if="annotation_id">
@@ -30,6 +49,7 @@ export default {
       annotation_id: null,
       error: false,
       error_msg: "",
+      isImage: false,
     };
   },
   methods: {

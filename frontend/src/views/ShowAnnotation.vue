@@ -11,6 +11,8 @@
             <td>
               <div>編集</div>
             </td>
+            <td>CSV作成</td>
+            <td>CSVダウンロード</td>
           </tr>
           <tr v-for="(annotation, index) in annotation_list" :key="index">
             <td>{{ index }}</td>
@@ -19,6 +21,16 @@
             <td>
               <button @click="moveToEdit(annotation.annotation_id)">
                 編集
+              </button>
+            </td>
+            <td>
+              <button @click="createResult(annotation.annotation_id)">
+                作成
+              </button>
+            </td>
+            <td>
+              <button @click="getCSV(annotation.annotation_id)">
+                ダウンロード
               </button>
             </td>
           </tr>
@@ -30,6 +42,10 @@
 <script>
 import axios from "axios";
 const base_url = "https://dr832vdhbi.execute-api.us-east-1.amazonaws.com/prod/";
+const api_url = "http://127.0.0.1:5000";
+import FileSaver from "file-saver";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 export default {
   data() {
     return {
@@ -44,16 +60,42 @@ export default {
         this.annotation_list = JSON.parse(response.data.annotation_table_data);
       } catch (e) {
         console.log(e);
+        toast(e, { autoClose: 1000 });
         this.error = true;
       }
     },
     moveToEdit(id) {
       this.$router.push({ path: "/edit/" + id });
     },
+    createResult(annotationId) {
+      axios
+        .post(base_url + "result", { annotation_id: annotationId })
+        .then(() => {})
+        .catch((e) => {
+          toast(e);
+          console.log(e);
+        });
+    },
+    async getCSV(annotationId) {
+      try {
+        const response = await axios.get(
+          api_url + `/api/get_csv?annotationId=${annotationId}`,
+          {
+            responseType: "blob",
+          }
+        );
+        const mineType = response.headers["content-type"];
+        const name = response.headers["content-disposition"];
+        const blob = new Blob([response.data], { type: mineType });
+        FileSaver.saveAs(blob, name);
+      } catch (e) {
+        console.log(e);
+        toast("csvファイルが存在しません", { autoClose: 1000 });
+      }
+    },
   },
-  async created() {
-    await this.getAllAnotation();
-    console.log(typeof this.annotation_list);
+  created() {
+    this.getAllAnotation();
   },
   computed: {
     showArray() {
