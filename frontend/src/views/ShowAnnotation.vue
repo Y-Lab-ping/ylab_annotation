@@ -89,6 +89,7 @@ export default {
         const blob = new Blob([response.data], { type: mineType });
         FileSaver.saveAs(blob, name);
       } catch (e) {
+        console.log("hello");
         console.log(e);
         toast("csvファイルが存在しません", { autoClose: 1000 });
       }

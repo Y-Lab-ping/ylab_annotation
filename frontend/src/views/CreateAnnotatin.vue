@@ -6,17 +6,25 @@
         <div>アノテーション名</div>
         <input type="text" v-model="annotation_name" />
       </div>
-      <div>
+      <div v-if="!isImage">
         <div>CSVファイルの選択</div>
-        <input type="file" name="" id="" @change="onFileChange" />
+        <input
+          type="file"
+          name=""
+          placeholder="CSVファイルを入力してください"
+          id=""
+          @change="onFileChange"
+        />
       </div>
       <div v-if="isImage">
         <div>画像ファイルの選択</div>
         <input
           type="file"
           accept="application/zip,application/x-zip-compressed"
+          placeholder="画像ファイルをzip形式で圧縮して入力したください"
           name=""
           id=""
+          @change="onZipFileChange"
         />
       </div>
       <div class="check_image">
@@ -28,21 +36,20 @@
       </div>
       <button @click="save">送信</button>
     </section>
-    <div v-if="annotation_id">
-      あなたのアノテーションIDは{{ annotation_id }}
-    </div>
+    <div v-if="annotation_id">アノテーション作成に成功しました</div>
     <button @click="backToHome" :disabled="isSaving">メニューへ戻る</button>
-    <div v-if="error">エラー</div>
+    <div v-if="error && !annotation_id">エラー</div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-const base = ""; // + "http://127.0.0.1:5000";
+const base = "http://127.0.0.1:5000";
 export default {
   data() {
     return {
       uploaded_file: null,
+      uploaded_zip: null,
       annotation_name: "",
       file: null,
       isSaving: false,
@@ -65,11 +72,27 @@ export default {
       };
       reader.readAsDataURL(file);
     },
+    onZipFileChange(e) {
+      let file = e.target.files[0];
+      this.file = file;
+      this.createZipFile(file);
+    },
+    async createZipFile(file) {
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        this.uploaded_zip = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
     async save() {
       this.isSaving = true;
       const params = new FormData();
       params.append("file", this.uploaded_file);
       params.append("title", this.annotation_name);
+      if (this.isImage) {
+        params.append("image", this.uploaded_zip);
+      }
+      params.append("isImage", +this.isImage);
       try {
         const response = await axios.post(base + "/api/reg_file", params, {
           headers: {

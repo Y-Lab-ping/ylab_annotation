@@ -2,25 +2,25 @@
   <div>
     <div class="form">
       <input
-        type="checkbox"
+        type="radio"
         :name="'check_job' + index"
         value="0"
-        v-model="result_img"
+        v-model="result_str"
         @click="save(0)"
       />
       <div class="image_container">
-        <img class="image" :src="job.image_0" alt="" />
+        <img class="image" :src="job.content_0" alt="" />
       </div>
 
       <input
-        type="checkbox"
+        type="radio"
         :name="'check_job' + index"
         v-model="result_str"
         value="1"
         @click="save(1)"
       />
       <div class="image_container">
-        <img class="image" :src="job.image_1" alt="" />
+        <img class="image" :src="job.content_1" alt="" />
       </div>
     </div>
   </div>
@@ -72,5 +72,10 @@ export default {
 .image_container {
   width: 300px;
   height: 300px;
+}
+
+.image {
+  max-width: 300px;
+  max-height: 300px;
 }
 </style>
