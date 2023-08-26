@@ -1,22 +1,42 @@
 <template>
-  <div class="form">
-    <input
-      type="radio"
-      :name="'check_job' + index"
-      value="0"
-      v-model="result_str"
-      @click="save(0)"
-    />
-    <div>{{ job.content_0 }}</div>
-    <input
-      type="radio"
-      :name="'check_job' + index"
-      value="1"
-      v-model="result_str"
-      @click="save(1)"
-    />
-    <div>{{ job.content_1 }}</div>
-  </div>
+  <form class="form my-5">
+
+    <div class="form-group">
+      <div class="form-check">
+        <input 
+          class="form-check-input mx-3"
+          style="transform:scale(2.0);"
+          type="radio"
+          :name="'check_job' + index"
+          value="0"
+          id="check1"
+          v-model="result_str"
+          @click="save(0)"
+        >
+        <label class="form-check-label mx-5" for="check1">
+          {{ job.content_0 }}
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-check">
+        <input 
+          class="form-check-input mx-3"
+          style="transform:scale(2.0);"
+          type="radio"
+          :name="'check_job' + index"
+          value="1"
+          v-model="result_str"
+          @click="save(1)"
+        >
+        <label class="form-check-label mx-5" for="check1">
+          {{ job.content_1 }}
+        </label>
+      </div>
+    </div>
+
+  </form>
 </template>
 
 <script>
