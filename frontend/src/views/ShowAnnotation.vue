@@ -1,5 +1,4 @@
 <template>
-  
   <h1 class="my-3 primary">アノテーション一覧</h1>
 
   <table class="table">
@@ -11,6 +10,7 @@
         <th>編集</th>
         <th>CSV作成</th>
         <th>CSVダウンロード</th>
+        <th>削除</th>
       </tr>
     </thead>
     <tbody>
@@ -19,29 +19,49 @@
         <td>{{ annotation.generated_time }}</td>
         <td>{{ annotation.annotation_name }}</td>
         <td>
-          <button class="btn btn-outline-dark" @click="moveToEdit(annotation.annotation_id)">
+          <button
+            class="btn btn-outline-dark"
+            @click="moveToEdit(annotation.annotation_id)"
+          >
             編集
           </button>
         </td>
         <td>
-          <button class="btn btn-outline-dark" @click="createResult(annotation.annotation_id)">
+          <button
+            class="btn btn-outline-dark"
+            @click="createResult(annotation.annotation_id)"
+          >
             作成
           </button>
         </td>
         <td>
-          <button class="btn btn-outline-dark" @click="getCSV(annotation.annotation_id)">
+          <button
+            class="btn btn-outline-dark"
+            @click="getCSV(annotation.annotation_id)"
+          >
             ダウンロード
+          </button>
+        </td>
+        <td>
+          <button
+            class="btn btn-outline-dark"
+            @click="deleteAnnotation(annotation.annotation_id, index)"
+          >
+            削除
           </button>
         </td>
       </tr>
     </tbody>
-    
   </table>
 
   <div class="mt-3 d-grid gap-2">
-    <button class="btn btn-outline-dark fs-3 font-weight-bold mt-3 mb-5" @click="backToHome">メニューへ戻る</button>
+    <button
+      class="btn btn-outline-dark fs-3 font-weight-bold mt-3 mb-5"
+      @click="backToHome"
+    >
+      メニューへ戻る
+    </button>
   </div>
-      
 </template>
 
 <script>
@@ -94,13 +114,34 @@ export default {
         const blob = new Blob([response.data], { type: mineType });
         FileSaver.saveAs(blob, name);
       } catch (e) {
-        console.log("hello");
         console.log(e);
         toast("csvファイルが存在しません", { autoClose: 1000 });
       }
     },
     backToHome() {
       this.$router.push({ path: "/" });
+    },
+    removeAnnotationFromList(index) {
+      this.annotation_list.splice(index, 1);
+    },
+    async deleteAnnotation(annotationId, index) {
+      const canDelete = confirm(
+        "id:" + annotationId + "を削除してもよろしいですか？"
+      );
+      console.log(!canDelete);
+      if (!canDelete) return;
+      try {
+        const response = await axios.post(
+          base_url + "annotation/" + annotationId
+        );
+        if (response.status != 200)
+          throw Error("通信エラーが発生しました\n" + "response: \n" + response);
+        this.removeAnnotationFromList(index);
+        toast("削除に成功しました");
+      } catch (e) {
+        console.log(e);
+        toast("削除時にエラーが発生しました");
+      }
     },
   },
   created() {
