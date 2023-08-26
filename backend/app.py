@@ -56,17 +56,13 @@ class createAnnotation(Resource):
             base64fileStorageObj = request.form["file"][21:]
             fileStorageObj = base64.b64decode(base64fileStorageObj)
             filename = "annotation" + annotation_name + current_time + ".csv"
-            with open(filename, "wb") as f:
-                f.write(fileStorageObj)
-
             upload_to_s3 = s3.put_object(
-                Body=open(filename, "rb"),
+                Body=fileStorageObj,
                 Bucket=s3_bucket,
                 Key=filename,
             )
             if upload_to_s3["ResponseMetadata"]["HTTPStatusCode"] != 200:
                 return jsonify(message="S3へのアップロードでエラーが発生しました"), 500
-            os.remove(filename)
         else:
             print("start image")
             zip_file_str = request.form["image"]
@@ -76,11 +72,10 @@ class createAnnotation(Resource):
             with open(zip_filename, "wb") as f:
                 f.write(zip_file_decoded)
             upload_zip_to_s3 = s3.put_object(
-                Body=open(zip_filename, "rb"), Bucket=s3_bucket, Key=zip_filename
+                Body=zip_file_decoded, Bucket=s3_bucket, Key=zip_filename
             )
             if upload_zip_to_s3["ResponseMetadata"]["HTTPStatusCode"] != 200:
                 return jsonify(message="S3へのアップロードでエラーが発生しました"), 500
-            os.remove(zip_filename)
 
         post_data = {
             "s3_name": filename,
