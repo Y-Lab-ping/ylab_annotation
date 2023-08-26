@@ -42,14 +42,17 @@ api = Api(app)
 
 class createAnnotation(Resource):
     def post(self):
+        print('start upload')
         s3_bucket = app.config["S3_BUCKET"]
         annotation_name = request.form["title"]
         current_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
         if "file" not in request.form:
+            print("file not exist")
             return abort(400, {"msg": "ファイルを入力してください"})
         is_image = bool(int(request.form["isImage"]))
         print(is_image)
         if not is_image:
+            print("start csv")
             base64fileStorageObj = request.form["file"][21:]
             fileStorageObj = base64.b64decode(base64fileStorageObj)
             filename = "annotation" + annotation_name + current_time + ".csv"
@@ -103,7 +106,8 @@ class getCSV(Resource):
         s3_bucket = app.config["S3_BUCKET"]
         try:
             obj = s3.get_object(Bucket=s3_bucket, Key=filename)
-        except:
+        except Exception as e:
+            print(e)
             return abort(400, "正しいデータを入力してください")
 
         response = make_response()
