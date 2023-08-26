@@ -67,7 +67,7 @@
 <script>
 import axios from "axios";
 const base_url = "https://dr832vdhbi.execute-api.us-east-1.amazonaws.com/prod/";
-const api_url = "http://127.0.0.1:5000";
+const api_url = ""; //+"http://127.0.0.1:5000";
 import FileSaver from "file-saver";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
