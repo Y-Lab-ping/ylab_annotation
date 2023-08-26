@@ -134,10 +134,6 @@ export default {
         const response = await axios.post(
           base_url + "annotation/" + annotationId
         );
-        console.log(response);
-        console.log(response.status);
-        console.log(response.status == "SUCCESS");
-        console.log(response.status == 200);
         if (response.status != 200)
           throw Error("通信エラーが発生しました\n" + "response: \n" + response);
         this.removeAnnotationFromList(index);
