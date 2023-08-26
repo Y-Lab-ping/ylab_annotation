@@ -1,44 +1,78 @@
 <template>
   <div>
-    <h3>アノテーションを作成</h3>
+
+    <h1 class="my-5 primary">アノテーションを作成</h1>
+    
+
+    <div v-if="annotation_id" class="alert-success py-3 my-3"> SUCCESS </div>
+    <div v-if="error && !annotation_id" class="alert-danger py-3 my-3"> ERROR </div>
+
+
     <section class="form">
-      <div>
-        <div>アノテーション名</div>
-        <input type="text" v-model="annotation_name" />
-      </div>
-      <div v-if="!isImage">
-        <div>CSVファイルの選択</div>
-        <input
-          type="file"
-          name=""
-          placeholder="CSVファイルを入力してください"
-          id=""
-          @change="onFileChange"
-        />
-      </div>
-      <div v-if="isImage">
-        <div>画像ファイルの選択</div>
-        <input
-          type="file"
-          accept="application/zip,application/x-zip-compressed"
-          placeholder="画像ファイルをzip形式で圧縮して入力したください"
-          name=""
-          id=""
-          @change="onZipFileChange"
-        />
-      </div>
-      <div class="check_image">
-        <input type="checkbox" v-model="isImage" name="" id="" />
-        <span class="checkbox_text">画像比較で登録</span>
-        <div class="warn" v-if="isImage">
-          ※画像はzipファイルに圧縮してから送信してください
+
+      <div class="form-group row my-3">
+        <label for="annotationName" class="col-sm-2 col-form-label">アノテーション名</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control"  id="annotationName" v-model="annotation_name" placeholder="Annotation Name"/>
         </div>
       </div>
-      <button @click="save">送信</button>
+
+      <div v-if="!isImage">
+        <div class="form-group row my-3">
+            <label for="csvFile" class="col-sm-2 form-label">CSVファイルの選択</label>
+            <div class="col-sm-10">
+              <input 
+                class="form-control" 
+                type="file" 
+                id="csvFile" 
+                name="" 
+                placeholder="CSVファイルを入力してください" 
+                @change="onFileChange"
+              >
+            </div>
+        </div>
+      </div>
+
+      <div v-if="isImage">
+        
+        <div class="form-group row my-3">
+            <label for="imageFile" class="col-sm-2 form-label">画像ファイルの選択</label>
+            <div class="col-sm-10">
+              <input 
+                class="form-control" 
+                type="file" 
+                accept="application/zip,application/x-zip-compressed"
+                id="imageFile" 
+                name="" 
+                placeholder="画像ファイルをzip形式で圧縮して入力したください"
+                @change="onFileChange"
+              >
+            </div>
+        </div>
+      </div>
+
+      <div class="check_image">
+        <div class="warn alert-danger py-3 my-3" v-if="isImage">
+          ※画像はzipファイルに圧縮してから送信してください
+        </div>
+        
+        <div class="custom-control custom-checkbox my-3">
+          <input type="checkbox" class="custom-control-input" v-model="isImage" name="" id="imageFlg">
+          <label class="checkbox_text custom-control-label" for="imageFlg">画像比較で登録</label>
+        </div>
+        
+      </div>
+      
+      <div class="mt-3 d-grid gap-2">
+        <button class="btn btn-dark mt-3 fs-3 font-weight-bold" @click="save">送信</button>
+      </div>
+
     </section>
-    <div v-if="annotation_id">アノテーション作成に成功しました</div>
-    <button @click="backToHome" :disabled="isSaving">メニューへ戻る</button>
-    <div v-if="error && !annotation_id">エラー</div>
+
+    <div class="mt-3 d-grid gap-2">
+      <button class="btn btn-outline-dark fs-3 font-weight-bold" @click="backToHome" :disabled="isSaving">メニューへ戻る</button>
+    </div>
+
   </div>
 </template>
 

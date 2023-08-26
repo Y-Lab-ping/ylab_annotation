@@ -1,4 +1,7 @@
 <template>
+
+  <h1 class="my-3 primary">アノテーション</h1>
+
   <div class="edit_area" v-if="jobList">
     <div v-for="(job, i) in jobList" :key="i" class="form">
       <EditJob
@@ -14,7 +17,10 @@
         @save="getResult(job, $event)"
       />
     </div>
-    <button @click="sendJob" :disabled="isSending">送信</button>
+    
+    <div class="mt-3 mb-5 d-grid gap-2">
+        <button class="btn btn-dark mt-3 fs-3 font-weight-bold" @click="sendJob" :disabled="isSending">送信</button>
+    </div>
   </div>
 </template>
 

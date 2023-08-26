@@ -1,44 +1,49 @@
 <template>
-  <div>
-    <div>
-      <h3>アノテーション一覧</h3>
-      <div class="table">
-        <table border="1">
-          <tr>
-            <td></td>
-            <td>作成日</td>
-            <td>名前</td>
-            <td>
-              <div>編集</div>
-            </td>
-            <td>CSV作成</td>
-            <td>CSVダウンロード</td>
-          </tr>
-          <tr v-for="(annotation, index) in annotation_list" :key="index">
-            <td>{{ index }}</td>
-            <td>{{ annotation.generated_time }}</td>
-            <td>{{ annotation.annotation_name }}</td>
-            <td>
-              <button @click="moveToEdit(annotation.annotation_id)">
-                編集
-              </button>
-            </td>
-            <td>
-              <button @click="createResult(annotation.annotation_id)">
-                作成
-              </button>
-            </td>
-            <td>
-              <button @click="getCSV(annotation.annotation_id)">
-                ダウンロード
-              </button>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
+  
+  <h1 class="my-3 primary">アノテーション一覧</h1>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>作成日</th>
+        <th>名前</th>
+        <th>編集</th>
+        <th>CSV作成</th>
+        <th>CSVダウンロード</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(annotation, index) in annotation_list" :key="index">
+        <td>{{ index }}</td>
+        <td>{{ annotation.generated_time }}</td>
+        <td>{{ annotation.annotation_name }}</td>
+        <td>
+          <button class="btn btn-outline-dark" @click="moveToEdit(annotation.annotation_id)">
+            編集
+          </button>
+        </td>
+        <td>
+          <button class="btn btn-outline-dark" @click="createResult(annotation.annotation_id)">
+            作成
+          </button>
+        </td>
+        <td>
+          <button class="btn btn-outline-dark" @click="getCSV(annotation.annotation_id)">
+            ダウンロード
+          </button>
+        </td>
+      </tr>
+    </tbody>
+    
+  </table>
+
+  <div class="mt-3 d-grid gap-2">
+    <button class="btn btn-outline-dark fs-3 font-weight-bold mt-3 mb-5" @click="backToHome">メニューへ戻る</button>
   </div>
+      
 </template>
+
 <script>
 import axios from "axios";
 const base_url = "https://dr832vdhbi.execute-api.us-east-1.amazonaws.com/prod/";
@@ -94,6 +99,9 @@ export default {
         toast("csvファイルが存在しません", { autoClose: 1000 });
       }
     },
+    backToHome() {
+      this.$router.push({ path: "/" });
+    },
   },
   created() {
     this.getAllAnotation();
@@ -108,9 +116,9 @@ export default {
   },
 };
 </script>
-<style scoped>
+<!-- <style scoped>
 .table {
   display: flex;
   justify-content: center;
 }
-</style>
+</style> -->

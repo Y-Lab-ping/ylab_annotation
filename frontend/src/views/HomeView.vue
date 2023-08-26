@@ -1,12 +1,12 @@
 <template>
-  <div class="home">
-    <div class="home_button">
-      <div @click="moveToCreate">アノテーション作成</div>
+    
+    <h1 class="my-5 primary">Annotation App</h1>
+
+    <div class="mt-3 d-grid gap-2">
+      <div class="btn btn-outline-dark p-5 my-3 fs-3 font-weight-bold" @click="moveToCreate">アノテーション作成</div>
+      <div class="btn btn-outline-dark p-5 my-3 fs-3 font-weight-bold" @click="moveToShow">アノテーション編集・ダウンロード</div>
     </div>
-    <div class="home_button">
-      <div @click="moveToShow">アノテーション編集・ダウンロード</div>
-    </div>
-  </div>
+
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<!-- <style scoped lang="scss">
 .home {
   & {
     width: 60%;
@@ -37,4 +37,4 @@ export default {
     border: solid 1px;
   }
 }
-</style>
+</style> -->
