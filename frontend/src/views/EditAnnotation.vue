@@ -19,7 +19,7 @@
     </div>
     
     <div class="mt-3 mb-5 d-grid gap-2">
-        <button class="btn btn-primary mt-3 fs-3 font-weight-bold" @click="sendJob" :disabled="isSending">送信</button>
+        <button class="btn btn-black mt-3 fs-3 font-weight-bold" @click="sendJob" :disabled="isSending">送信</button>
     </div>
   </div>
 </template>
