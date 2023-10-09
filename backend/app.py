@@ -8,9 +8,7 @@ from flask import (
     send_file,
 )
 from flask_restful import Api, Resource
-import urllib3
 import boto3
-import os
 import datetime
 import requests
 from io import StringIO
@@ -42,7 +40,7 @@ api = Api(app)
 
 class createAnnotation(Resource):
     def post(self):
-        print('start upload')
+        print("start upload")
         s3_bucket = app.config["S3_BUCKET"]
         annotation_name = request.form["title"]
         current_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
@@ -68,11 +66,9 @@ class createAnnotation(Resource):
             zip_file_str = request.form["image"]
             zip_file = zip_file_str[zip_file_str.find(",") + 1 :]
             zip_file_decoded = base64.b64decode(zip_file)
-            zip_filename = "annotation" + annotation_name + current_time + "_image.zip"
-            with open(zip_filename, "wb") as f:
-                f.write(zip_file_decoded)
+            filename = "annotation" + annotation_name + current_time + "_image.zip"
             upload_zip_to_s3 = s3.put_object(
-                Body=zip_file_decoded, Bucket=s3_bucket, Key=zip_filename
+                Body=zip_file_decoded, Bucket=s3_bucket, Key=filename
             )
             if upload_zip_to_s3["ResponseMetadata"]["HTTPStatusCode"] != 200:
                 return jsonify(message="S3へのアップロードでエラーが発生しました"), 500
@@ -82,7 +78,6 @@ class createAnnotation(Resource):
             "annotation_name": annotation_name,
             "is_image": is_image,
         }
-
         response = requests.post(app.config["BASE_URL"] + "annotation", json=post_data)
         print(response)
 
@@ -132,5 +127,5 @@ def costom400(error):
 
 
 if __name__ == "__main__":
-    # app.run(debug=False)
+    app.run(debug=True)
     serve(app, host="0.0.0.0", port=5000)

@@ -66,7 +66,7 @@
 
 <script>
 import axios from "axios";
-const base_url = "https://dr832vdhbi.execute-api.us-east-1.amazonaws.com/prod/";
+const base_url = process.env.VUE_APP_AWS_URL;
 const api_url = ""; //+"http://127.0.0.1:5000";
 import FileSaver from "file-saver";
 import { toast } from "vue3-toastify";
@@ -97,7 +97,7 @@ export default {
         .post(base_url + "result", { annotation_id: annotationId })
         .then(() => {})
         .catch((e) => {
-          toast(e);
+          toast(e.message);
           console.log(e);
         });
     },
